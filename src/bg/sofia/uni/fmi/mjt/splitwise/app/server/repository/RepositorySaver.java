@@ -37,7 +37,9 @@ public class RepositorySaver {
 
     private static <K, V> Map<K, V> loadData(RepositoryPath repositoryPath, TypeToken<Map<K, V>> typeToken) {
         try (FileReader reader = new FileReader(repositoryPath.getPath())) {
-            return GsonSingleton.getInstance().fromJson(reader, typeToken.getType());
+            Map<K, V> data = GsonSingleton.getInstance().fromJson(reader, typeToken.getType());
+
+            return (data != null) ? data : new HashMap<>();
         } catch (IOException e) {
             return new HashMap<>();
         }

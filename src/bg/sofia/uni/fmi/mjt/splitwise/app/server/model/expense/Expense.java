@@ -3,9 +3,11 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server.model.expense;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.Group;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Set;
 
-public abstract class Expense {
+public class Expense {
+    protected static final int BIG_DECIMAL_SCALE = 2;
     private final String credited; // The person who paid the expense
     private final String reasonForPayment;
     protected final BigDecimal totalAmount;
@@ -26,7 +28,9 @@ public abstract class Expense {
         return totalAmount;
     }
 
-    public abstract BigDecimal getAmountPerPerson();
+    public BigDecimal getAmountPerPerson() {
+        return totalAmount.divide(BigDecimal.valueOf(debited.size()), BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+    }
 
     public Set<String> getDebited(String username) {
         return debited.usersExcept(username);

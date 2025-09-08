@@ -12,7 +12,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 public final class StatusCommand extends DebtStatusCommand {
-    private static final String SUCCESS_MESSAGE = "Friends:\n%s\n\nGroups:\n%s";
+    private static final String SUCCESS_MESSAGE = "Friends:\n%s\nGroups:\n%s";
 
     private String getStatus(User runner, Set<Group> groups) throws ExpenseSplitException {
         StringBuilder status = new StringBuilder();

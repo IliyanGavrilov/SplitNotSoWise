@@ -49,7 +49,7 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
 
         InMemoryNotificationRepository.getInstance()
             .addNotification(runner.getUsername(),
-                String.format(NOTIFICATION_MESSAGE, runner.getNickname(), args[AMOUNT_IDX], debited.getCurrency()),
+                String.format(NOTIFICATION_MESSAGE, runner.getNickname(), args[AMOUNT_IDX], runner.getCurrency()),
                 group);
 
         return String.format(SUCCESS_MESSAGE, amount, runner.getCurrency(), getName(group),

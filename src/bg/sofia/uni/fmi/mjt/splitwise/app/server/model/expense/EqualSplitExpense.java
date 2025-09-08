@@ -12,6 +12,6 @@ public class EqualSplitExpense extends Expense {
 
     @Override
     public BigDecimal getAmountPerPerson() {
-        return totalAmount.divide(BigDecimal.valueOf(debited.size()), 2, RoundingMode.HALF_UP);
+        return totalAmount.divide(BigDecimal.valueOf(debited.size()), BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
     }
 }

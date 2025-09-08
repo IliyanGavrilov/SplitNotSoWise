@@ -2,7 +2,9 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server;
 
 import bg.sofia.uni.fmi.mjt.splitwise.api.client.ExchangeRatesClient;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandExecutor;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
+import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -55,7 +57,7 @@ public class ExpenseServer {
         }
     }
 
-    private void processClientRequest() throws IOException {
+    private void processClientRequest() throws IOException, ExpenseSplitException {
         int readyChannels = selector.select();
         if (readyChannels == 0) {
             return;
@@ -86,11 +88,15 @@ public class ExpenseServer {
         }
     }
 
-    private String getClientInput(SocketChannel clientChannel) throws IOException {
+    private String getClientInput(SocketChannel clientChannel) throws IOException, ExpenseSplitException {
         buffer.clear();
 
         int readBytes = clientChannel.read(buffer);
         if (readBytes < 0) {
+            if (UserSessionManager.getInstance().isLoggedIn(clientChannel)) {
+                UserSessionManager.getInstance().logout(clientChannel);
+            }
+
             clientChannel.close();
             return null;
         }

@@ -1,0 +1,1 @@
+{"a":[{"name":"abc","users":["a","b","c"],"type":"GROUP"},{"name":"a b","users":["a","b"],"type":"FRIEND"}],"b":[{"name":"abc","users":["a","b","c"],"type":"GROUP"},{"name":"a b","users":["a","b"],"type":"FRIEND"}],"c":[{"name":"abc","users":["a","b","c"],"type":"GROUP"}]}

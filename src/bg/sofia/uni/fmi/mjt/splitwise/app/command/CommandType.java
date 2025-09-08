@@ -21,43 +21,50 @@ import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 public enum CommandType {
-    LOGIN("login", new String[] {"<username>", "<password>"}, CommandArgumentsType.EXACT),
-    LOGOUT("logout", new String[] {}, CommandArgumentsType.EXACT),
-    REGISTER("register", new String[] {"<username>", "<password>", "<nickname>"}, CommandArgumentsType.AT_LEAST),
-    ADD_FRIEND("add-friend", new String[] {"<username>"}, CommandArgumentsType.EXACT),
-    CREATE_GROUP("create-group", new String[] {"<group_name>", "<username> <username> ..."},
+    LOGIN(new String[] {"login"}, new String[] {"<username>", "<password>"}, CommandArgumentsType.EXACT),
+    LOGOUT(new String[] {"logout"}, new String[] {}, CommandArgumentsType.EXACT),
+    REGISTER(new String[] {"register"}, new String[] {"<username>", "<password>", "<nickname>"},
         CommandArgumentsType.AT_LEAST),
-    SPLIT("split", new String[] {"<amount>", "<username>", "<reason_for_payment>"}, CommandArgumentsType.AT_LEAST),
-    SPLIT_GROUP("split-group", new String[] {"<amount>", "<group_name>", "<reason_for_payment>"},
+    ADD_FRIEND(new String[] {"add-friend", "add-user"}, new String[] {"<username>"}, CommandArgumentsType.EXACT),
+    CREATE_GROUP(new String[] {"create-group", "add-group"},
+        new String[] {"<group_name>", "<username>", "<username> ..."}, CommandArgumentsType.AT_LEAST),
+    SPLIT(new String[] {"split", "split-friend", "split-user"},
+        new String[] {"<amount>", "<username>", "<reason_for_payment>"}, CommandArgumentsType.AT_LEAST),
+    SPLIT_GROUP(new String[] {"split-group"}, new String[] {"<amount>", "<group_name>", "<reason_for_payment>"},
         CommandArgumentsType.AT_LEAST),
-    GET_STATUS("get-status", new String[] {}, CommandArgumentsType.EXACT),
-    PAID("paid", new String[] {"<amount>", "<username>"}, CommandArgumentsType.EXACT),
-    PAYMENT_HISTORY("payment-history", new String[] {}, CommandArgumentsType.EXACT),
-    SWITCH_CURRENCY("switch-currency", new String[] {"<currency_code>"}, CommandArgumentsType.EXACT),
-    HELP("help", new String[] {}, CommandArgumentsType.EXACT),
-    DISCONNECT("disconnect", new String[] {}, CommandArgumentsType.EXACT),
-    UNKNOWN("", new String[] {}, CommandArgumentsType.EXACT);
+    GET_STATUS(new String[] {"get-status", "status"}, new String[] {}, CommandArgumentsType.EXACT),
+    PAID(new String[] {"paid"}, new String[] {"<amount>", "<username>"}, CommandArgumentsType.EXACT),
+    PAYMENT_HISTORY(new String[] {"payment-history", "payments", "history", "transactions"}, new String[] {},
+        CommandArgumentsType.EXACT),
+    SWITCH_CURRENCY(new String[] {"switch-currency", "change-currency"}, new String[] {"<currency_code>"},
+        CommandArgumentsType.EXACT),
+    HELP(new String[] {"help", "info", "commands", "manual", "man"}, new String[] {},
+        CommandArgumentsType.EXACT),
+    DISCONNECT(new String[] {"disconnect"}, new String[] {}, CommandArgumentsType.EXACT),
+    UNKNOWN(new String[] {""}, new String[] {}, CommandArgumentsType.EXACT);
 
     private static final String INVALID_ARGS =
-        "Invalid count of arguments: \"%s\" expects %d arguments. Example: \"%s\"";
+        "Invalid count of arguments: \"%s\" expects EXACTLY %d arguments. Example: \"%s\"";
     private static final String INSUFFICIENT_ARGS =
-        "Invalid count of arguments: \"%s\" expects at least %d arguments. Example: \"%s\"";
+        "Invalid count of arguments: \"%s\" expects AT LEAST %d arguments. Example: \"%s\"";
     private static final Set<String> NUMBER_ARGS = Set.of("<amount>");
     private static final String COMMAND_DELIMITER = " ";
 
     private final String command;
+    private final Set<String> aliases;
     private final String[] args;
     private final CommandArgumentsType argsCntType;
 
-    CommandType(String command, String[] args, CommandArgumentsType argsCntType) {
-        this.command = command;
+    CommandType(String[] aliases, String[] args, CommandArgumentsType argsCntType) {
+        this.command = aliases[0];
+        this.aliases = Set.of(aliases);
         this.args = args;
         this.argsCntType = argsCntType;
     }
 
     public static CommandType fromString(String command) {
         for (CommandType type : values()) {
-            if (type.command.equalsIgnoreCase(command)) {
+            if (type.aliases.contains(command.toLowerCase())) {
                 return type;
             }
         }
@@ -110,12 +117,8 @@ public enum CommandType {
                 }
             }
         } catch (NumberFormatException e) {
-            throw new ExpenseSplitException(inputArgs[i] + " is not a valid number!", e);
+            throw new ExpenseSplitException(String.format("\"%s\" is not a valid number!", inputArgs[i]), e);
         }
-    }
-
-    public String getCommand() {
-        return command;
     }
 
     @Override

@@ -24,12 +24,12 @@ public class UserSessionManager {
     }
 
     public void login(SocketChannel socketChannel, String username, String password) throws ExpenseSplitException {
-        if (isLoggedIn(username)) {
-            throw new ExpenseSplitException("User is logged in from another device!");
-        }
-
         if (isLoggedIn(socketChannel)) {
             throw new ExpenseSplitException("You're already logged in!");
+        }
+
+        if (isLoggedIn(username)) {
+            throw new ExpenseSplitException("User is logged in from another device!");
         }
 
         if (!InMemoryUserRepository.getInstance().validateUserLoginInfo(username, password)) {

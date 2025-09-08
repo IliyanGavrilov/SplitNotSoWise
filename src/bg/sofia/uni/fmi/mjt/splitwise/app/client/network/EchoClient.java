@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
+import java.util.Set;
 
 public class EchoClient {
     private static final String SERVER_HOST = "localhost";
@@ -17,8 +18,10 @@ public class EchoClient {
     private static final ByteBuffer BUFFER = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
     private static final String QUIT_COMMAND = "quit";
+    private static final String EXIT_COMMAND = "exit";
     private static final String CONNECT_COMMAND = "connect";
     private static final String DISCONNECT_COMMAND = "disconnect";
+    private static final Set<String> TERMINATION_COMMANDS = Set.of(QUIT_COMMAND, EXIT_COMMAND);
 
     private static final String JSON_STATUS = "status";
     private static final String JSON_MESSAGE = "data";
@@ -40,7 +43,7 @@ public class EchoClient {
         try (Scanner scanner = new Scanner(System.in)) {
             String message = serverCommunication(scanner);
 
-            while (!QUIT_COMMAND.equals(message)) {
+            while (!TERMINATION_COMMANDS.contains(message)) {
                 printPrompt(null);
                 message = scanner.nextLine();
 
@@ -62,17 +65,20 @@ public class EchoClient {
 
             while (socketChannel.isConnected()) {
                 printPrompt(socketChannel);
-
                 message = scanner.nextLine(); // read a line from the console
 
-                if (QUIT_COMMAND.equals(message) || DISCONNECT_COMMAND.equals(message)) {
+                if (message.isBlank()) {
+                    continue;
+                }
+
+                if (DISCONNECT_COMMAND.equals(message)) {
                     break;
                 }
 
                 sendMessage(socketChannel, message);
                 String reply = receiveMessage(socketChannel);
 
-                printResponse(reply); // display reply
+                printResponse(reply);
             }
         } catch (Exception e) {
             System.err.printf("There is a problem with the network communication: %s%n", e.getMessage());

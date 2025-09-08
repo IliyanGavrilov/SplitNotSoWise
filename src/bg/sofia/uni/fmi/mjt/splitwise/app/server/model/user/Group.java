@@ -13,7 +13,7 @@ public record Group(String name, Set<String> users, GroupType type) {
     private static final String FRIENDSHIP_GROUP_NAME_DELIMITER = " ";
 
     public Group(String name, Set<String> users, GroupType type) {
-        if (name.isBlank() && users.size() == FRIENDSHIP_GROUP_SIZE) {
+        if (isFriendShipGroup(users)) {
             this.type = GroupType.FRIEND;
             try {
                 this.name = getFriendshipGroupName(users);
@@ -32,12 +32,13 @@ public record Group(String name, Set<String> users, GroupType type) {
     }
 
     public Group(Set<String> users) {
-        this("", users, null);
+        this(null, users);
     }
 
     public static String getFriendshipGroupName(Set<String> members) throws ExpenseSplitException {
         if (members.size() != FRIENDSHIP_GROUP_SIZE) {
-            throw new ExpenseSplitException("Given more or less than 2 members for a friendship group!");
+            throw new ExpenseSplitException(
+                "Invalid friendship group size! Friendship group size must be " + FRIENDSHIP_GROUP_SIZE);
         }
 
         return members.stream()
@@ -65,6 +66,10 @@ public record Group(String name, Set<String> users, GroupType type) {
         }
 
         return name;
+    }
+
+    public boolean isFriendShipGroup(Set<String> users) {
+        return users.size() == FRIENDSHIP_GROUP_SIZE;
     }
 
     public boolean isFriendshipGroup() {

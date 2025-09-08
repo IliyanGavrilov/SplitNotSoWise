@@ -8,7 +8,7 @@ import java.util.Set;
 public interface GroupRepository {
     boolean groupExistsForUsers(String groupName, Set<String> users);
 
-    void addGroup(String... members) throws ExpenseSplitException;
+    void addGroup(Set<String> members) throws ExpenseSplitException;
 
     void addGroup(String groupName, Set<String> members) throws ExpenseSplitException;
 
@@ -18,7 +18,7 @@ public interface GroupRepository {
 
     Set<Group> getUserGroups(String username);
 
-    public Group getGroup(String groupName, String username) throws ExpenseSplitException;
+    Group getGroup(String groupName, String username) throws ExpenseSplitException;
 
-    Group getGroup(String... usernames) throws ExpenseSplitException;
+    Group getGroup(Set<String> members) throws ExpenseSplitException;
 }

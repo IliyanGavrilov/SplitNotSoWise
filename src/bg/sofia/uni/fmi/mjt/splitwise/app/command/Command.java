@@ -25,10 +25,6 @@ public abstract class Command {
         this.socket = socket;
     }
 
-    public String command() {
-        return type.getCommand();
-    }
-
     public String[] arguments() {
         return args;
     }
