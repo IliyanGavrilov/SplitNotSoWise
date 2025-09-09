@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-public class InMemoryNotificationRepository implements NotificationRepository {
+public final class InMemoryNotificationRepository implements NotificationRepository {
     private static final String NO_NOTIFICATION_MESSAGE = "No notifications to show.";
     private static final String NOTIFICATION_MESSAGE = "*** Notifications ***";
     private static final String FRIENDSHIP_GROUP_NAME = "Friends";

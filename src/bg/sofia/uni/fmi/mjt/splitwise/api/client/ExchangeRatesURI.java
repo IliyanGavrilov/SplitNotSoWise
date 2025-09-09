@@ -3,7 +3,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.api.client;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class ExchangeRatesURI {
+public final class ExchangeRatesURI {
     public static final String DEFAULT_CURRENCY_CODE = "BGN";
     private static final String API_ENDPOINT_SCHEME = "https";
     private static final String API_ENDPOINT_HOST = "v6.exchangerate-api.com";
@@ -20,7 +20,7 @@ public class ExchangeRatesURI {
         return new URI(API_ENDPOINT_SCHEME, API_ENDPOINT_HOST, String.format(API_ENDPOINT_PATH, apiKey), "", null);
     }
 
-    public static class ExchangeRatesURIBuilder {
+    public static final class ExchangeRatesURIBuilder {
         // Required parameters
         private final String apiKey;
 

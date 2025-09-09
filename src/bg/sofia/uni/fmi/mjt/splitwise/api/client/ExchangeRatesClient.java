@@ -18,7 +18,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 
-public class ExchangeRatesClient implements CurrencyRatesClient {
+public final class ExchangeRatesClient implements CurrencyRatesClient {
     private static final String API_KEY_NAME = "EXCHANGE_API_KEY";
     private static String apiKey;
     private static final Gson GSON = new GsonBuilder()

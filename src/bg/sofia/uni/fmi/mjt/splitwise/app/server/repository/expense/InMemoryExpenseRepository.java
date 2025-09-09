@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class InMemoryExpenseRepository implements ExpenseRepository {
+public final class InMemoryExpenseRepository implements ExpenseRepository {
     private final Map<String, List<Expense>> expenses; // For history of payments
     // Outer key is paidBy, inner is payers
     private final Map<String, Map<String, BigDecimal>> amountsOwed;

@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class InMemoryGroupRepository implements GroupRepository {
+public final class InMemoryGroupRepository implements GroupRepository {
     private final Map<String, Set<Group>> groupsByName;
     private final Map<String, Set<Group>> groupsByUser;
     private static InMemoryGroupRepository instance;

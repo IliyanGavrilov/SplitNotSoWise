@@ -50,7 +50,8 @@ public class ExchangeRatesClientTest {
 
         ExchangeRates result = ExchangeRatesClient.getInstance().getExchangeRates();
 
-        assertEquals(BigDecimal.TWO, result.convert(BigDecimal.valueOf(2), "BGN"), "Expected conversion rate to be 1!");
+        assertEquals(BigDecimal.TWO, result.convertFromBaseCurrency(BigDecimal.valueOf(2), "BGN"),
+            "Expected conversion rate to be 1!");
 
         // Test if the status works fine
         assertTrue(result.isSuccess(), "Expected non-error result to return ok status");
@@ -92,7 +93,9 @@ public class ExchangeRatesClientTest {
 
         ExchangeRates result = exchangeRatesClient.getExchangeRates();
 
-        assertEquals(BigDecimal.TWO, result.convert(BigDecimal.valueOf(2), "BGN"), "Expected conversion rate to be 1!");
-        assertEquals(BigDecimal.TWO, result.convert(BigDecimal.valueOf(1), "USD"), "Expected conversion rate to be 2!");
+        assertEquals(BigDecimal.TWO, result.convertFromBaseCurrency(BigDecimal.valueOf(2), "BGN"),
+            "Expected conversion rate to be 1!");
+        assertEquals(BigDecimal.TWO, result.convertFromBaseCurrency(BigDecimal.valueOf(1), "USD"),
+            "Expected conversion rate to be 2!");
     }
 }

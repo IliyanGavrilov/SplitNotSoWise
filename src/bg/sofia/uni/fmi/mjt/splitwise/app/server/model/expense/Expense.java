@@ -7,11 +7,11 @@ import java.math.RoundingMode;
 import java.util.Set;
 
 public class Expense {
-    protected static final int BIG_DECIMAL_SCALE = 2;
     private final String credited; // The person who paid the expense
     private final String reasonForPayment;
     protected final BigDecimal totalAmount;
     protected final Group debited; // The people who owe the person who paid
+    public static final int BIG_DECIMAL_SCALE = 2;
 
     public Expense(BigDecimal totalAmount, String paidBy, Group debited, String reasonForPayment) {
         this.totalAmount = totalAmount;

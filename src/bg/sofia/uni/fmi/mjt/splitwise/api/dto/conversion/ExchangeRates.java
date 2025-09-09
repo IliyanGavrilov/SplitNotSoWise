@@ -4,11 +4,14 @@ import bg.sofia.uni.fmi.mjt.splitwise.api.dto.BaseResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
-public class ExchangeRates extends BaseResponse {
+import static bg.sofia.uni.fmi.mjt.splitwise.app.server.model.expense.Expense.BIG_DECIMAL_SCALE;
+
+public final class ExchangeRates extends BaseResponse {
     private static final String STATUS = "success";
     @SerializedName("conversion_rates")
     private final Map<String, BigDecimal> rates;
@@ -40,7 +43,13 @@ public class ExchangeRates extends BaseResponse {
         return instance;
     }
 
-    public BigDecimal convert(BigDecimal amount, String currency) {
+    // Input
+    public BigDecimal convertToBaseCurrency(BigDecimal amount, String currency) {
+        return amount.divide(rates.get(currency), BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+    }
+
+    // Output
+    public BigDecimal convertFromBaseCurrency(BigDecimal amount, String currency) {
         return rates.get(currency).multiply(amount);
     }
 

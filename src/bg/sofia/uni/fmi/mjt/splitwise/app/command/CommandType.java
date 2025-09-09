@@ -116,7 +116,10 @@ public enum CommandType {
         try {
             for (; i < args.length; i++) {
                 if (NUMBER_ARGS.contains(args[i])) {
-                    new BigDecimal(inputArgs[i]);
+                    if (new BigDecimal(inputArgs[i]).compareTo(BigDecimal.ZERO) < 0) {
+                        throw new ExpenseSplitException(
+                            String.format("Given number \"%s\" < 0! Negative numbers are not allowed!", inputArgs[i]));
+                    }
                 }
             }
         } catch (NumberFormatException e) {

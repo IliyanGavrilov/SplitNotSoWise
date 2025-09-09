@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RepositorySaver {
+public final class RepositorySaver {
     private static final int FILES_CNT = RepositoryPath.getFilesCount();
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(FILES_CNT);

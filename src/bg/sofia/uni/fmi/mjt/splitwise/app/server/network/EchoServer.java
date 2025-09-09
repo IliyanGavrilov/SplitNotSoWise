@@ -3,7 +3,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server.network;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.ExpenseServer;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
 
-public class EchoServer {
+public final class EchoServer {
     private static final int SERVER_PORT = 7777;
     private static ExpenseServer server;
 

@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EnvironmentVariableLoader {
+public final class EnvironmentVariableLoader {
     private static final Path ENV_FILE_PATH = Paths.get("resources", ".env");
     private static final String ENV_FILE_MESSAGE_SYMBOL = "#";
     private static final String ENV_KEY_NAME_AND_VALUE_SEPARATOR = "=";

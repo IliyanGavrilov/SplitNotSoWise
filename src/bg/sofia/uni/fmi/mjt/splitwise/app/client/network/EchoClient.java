@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.Set;
 
-public class EchoClient {
+public final class EchoClient {
     private static final String SERVER_HOST = "localhost";
     private static final int SERVER_PORT = 7777;
     private static final int BUFFER_SIZE = 1024;

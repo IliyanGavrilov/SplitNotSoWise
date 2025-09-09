@@ -81,12 +81,3 @@
 //        // throw new APIErrorException("Unknown API error code: " + code); TODO
 //    }
 //}
-
-// TODO
-// java - login/register password hashing vs encryption fixx
-//
-// notifications - nakraq ako ne e loggedIn!
-//
-// тряя да пооправя командите и имам някои unhandled exceptions, нотификации да напрая то просто тряя да комуникират
-// 3те repository класа за тва, unit test-ове за апликацията (за апито напраих) и тва дето ти пратих сутринта за
-// запазването най-вероятно няма и да работи и не знам и как да го направя тва запазване + updateExchangeRates

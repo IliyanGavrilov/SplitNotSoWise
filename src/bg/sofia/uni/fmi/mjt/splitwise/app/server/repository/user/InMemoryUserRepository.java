@@ -7,7 +7,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException
 
 import java.util.Map;
 
-public class InMemoryUserRepository implements UserRepository {
+public final class InMemoryUserRepository implements UserRepository {
     private final Map<String, User> usersByUsername;
     private static InMemoryUserRepository instance;
 

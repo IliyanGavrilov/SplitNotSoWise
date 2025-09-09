@@ -38,7 +38,7 @@ public class User {
         if (!ExchangeRatesClient.getInstance().getExchangeRates().hasCurrency(currency)) {
             throw new UnsupportedCurrencyCodeException("Given currency code is not supported!");
         }
-        
+
         this.currency = currency;
     }
 

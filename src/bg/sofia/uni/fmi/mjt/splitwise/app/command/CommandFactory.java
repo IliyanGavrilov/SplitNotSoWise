@@ -4,7 +4,7 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandFactory {
+public final class CommandFactory {
     // straight out of https://stackoverflow.com/a/14656159 with small enhancement
     private static List<String> getCommandArguments(String input) {
         List<String> tokens = new ArrayList<>();
