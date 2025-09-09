@@ -4,6 +4,9 @@ import bg.sofia.uni.fmi.mjt.splitwise.app.command.Command;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public final class HelpCommand extends Command {
     public HelpCommand(String[] args) {
         super(args, CommandType.HELP, null);
@@ -11,14 +14,9 @@ public final class HelpCommand extends Command {
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        StringBuilder result2 = new StringBuilder();
-
-        for (CommandType type : CommandType.values()) {
-            if (type != CommandType.HELP) {
-                result2.append(type).append('\n');
-            }
-        }
-
-        return result2.toString();
+        return Arrays.stream(CommandType.values())
+            .filter(type -> type != CommandType.HELP)
+            .map(CommandType::toString)
+            .collect(Collectors.joining("\n"));
     }
 }

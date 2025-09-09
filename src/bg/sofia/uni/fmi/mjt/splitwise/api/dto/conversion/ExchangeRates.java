@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 
 public class ExchangeRates extends BaseResponse {
     private static final String STATUS = "success";
@@ -49,5 +50,9 @@ public class ExchangeRates extends BaseResponse {
 
     public LocalDateTime getNextUpdateTime() {
         return nextUpdateTime;
+    }
+
+    public Set<String> getAvailableCurrencies() {
+        return rates.keySet();
     }
 }

@@ -3,6 +3,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.api;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.Command;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
@@ -19,8 +20,10 @@ public final class SwitchCurrencyCommand extends Command {
     @Override
     protected String executeCommand() throws ExpenseSplitException {
         User runner = UserSessionManager.getInstance().getLoggedUser(socket);
-        runner.setCurrency(args[CURRENCY_CODE_IDX]);
+        String newCurrency = args[CURRENCY_CODE_IDX].toUpperCase();
+        
+        InMemoryUserRepository.getInstance().changeCurrency(runner, newCurrency);
 
-        return String.format(SUCCESS_MESSAGE, args[CURRENCY_CODE_IDX]);
+        return String.format(SUCCESS_MESSAGE, newCurrency);
     }
 }

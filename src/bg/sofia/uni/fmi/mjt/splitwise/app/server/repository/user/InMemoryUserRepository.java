@@ -2,6 +2,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user;
 
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositorySaver;
+import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.util.Map;
@@ -35,6 +36,12 @@ public class InMemoryUserRepository implements UserRepository {
         }
 
         usersByUsername.put(username, new User(username, password, nickname));
+        RepositorySaver.saveUsers(usersByUsername);
+    }
+
+    @Override
+    public void changeCurrency(User user, String newCurrency) throws ExchangeAPIException {
+        user.setCurrency(newCurrency);
         RepositorySaver.saveUsers(usersByUsername);
     }
 

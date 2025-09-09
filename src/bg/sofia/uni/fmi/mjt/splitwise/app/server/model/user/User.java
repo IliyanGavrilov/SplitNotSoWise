@@ -35,11 +35,11 @@ public class User {
     }
 
     public void setCurrency(String currency) throws ExchangeAPIException {
-        if (ExchangeRatesClient.getInstance().getExchangeRates().hasCurrency(currency)) {
-            this.currency = currency;
+        if (!ExchangeRatesClient.getInstance().getExchangeRates().hasCurrency(currency)) {
+            throw new UnsupportedCurrencyCodeException("Given currency code is not supported!");
         }
-
-        throw new UnsupportedCurrencyCodeException("Given currency code is not supported!");
+        
+        this.currency = currency;
     }
 
     public boolean authenticate(String password) {

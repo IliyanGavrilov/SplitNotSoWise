@@ -1,5 +1,6 @@
 package bg.sofia.uni.fmi.mjt.splitwise.app.command;
 
+import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.api.ListCurrenciesCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.api.SwitchCurrencyCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.auth.LoginCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.auth.LogoutCommand;
@@ -36,8 +37,9 @@ public enum CommandType {
     PAID(new String[] {"paid"}, new String[] {"<amount>", "<username>"}, CommandArgumentsType.EXACT),
     PAYMENT_HISTORY(new String[] {"payment-history", "payments", "history", "transactions"}, new String[] {},
         CommandArgumentsType.EXACT),
-    SWITCH_CURRENCY(new String[] {"switch-currency", "change-currency"}, new String[] {"<currency_code>"},
-        CommandArgumentsType.EXACT),
+    SWITCH_CURRENCY(new String[] {"switch-currency", "change-currency", "set-currency"},
+        new String[] {"<currency_code>"}, CommandArgumentsType.EXACT),
+    LIST_CURRENCIES(new String[] {"list-currencies", "currencies"}, new String[] {}, CommandArgumentsType.EXACT),
     HELP(new String[] {"help", "info", "commands", "manual", "man"}, new String[] {},
         CommandArgumentsType.EXACT),
     DISCONNECT(new String[] {"disconnect"}, new String[] {}, CommandArgumentsType.EXACT),
@@ -91,6 +93,7 @@ public enum CommandType {
             case PAID -> new PaidCommand(args, channel);
             case PAYMENT_HISTORY -> new PaymentHistoryCommand(args, channel);
             case SWITCH_CURRENCY -> new SwitchCurrencyCommand(args, channel);
+            case LIST_CURRENCIES -> new ListCurrenciesCommand(args);
             case HELP -> new HelpCommand(args);
             case DISCONNECT -> new DisconnectCommand(args);
             default -> new UnknownCommand(args);
