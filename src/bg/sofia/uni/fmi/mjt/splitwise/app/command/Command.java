@@ -19,6 +19,10 @@ public abstract class Command {
         return GsonSingleton.getInstance().toJson(response);
     }
 
+    public Command(String[] args, CommandType type) {
+        this(args, type, null);
+    }
+
     public Command(String[] args, CommandType type, SocketChannel socket) {
         this.args = args;
         this.type = type;

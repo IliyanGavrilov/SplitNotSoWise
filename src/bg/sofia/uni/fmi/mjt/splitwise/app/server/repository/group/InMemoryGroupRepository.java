@@ -106,7 +106,7 @@ public final class InMemoryGroupRepository implements GroupRepository {
         set.retainAll(filterGroupsByName(groupName, _ -> true));
 
         if (set.size() != UNIQUE_GROUPS_CNT) {
-            throw new ExpenseSplitException("Given username or group name is invalid! No such group exists!"); // TODO
+            throw new ExpenseSplitException("Given group name is invalid! No such group exists!");
         }
 
         return set.iterator().next();
@@ -114,6 +114,10 @@ public final class InMemoryGroupRepository implements GroupRepository {
 
     @Override
     public Group getGroup(Set<String> members) throws ExpenseSplitException {
-        return getGroup(Group.getFriendshipGroupName(members), members.iterator().next());
+        try {
+            return getGroup(Group.getFriendshipGroupName(members), members.iterator().next());
+        } catch (ExpenseSplitException e) {
+            throw new ExpenseSplitException("Given username is not present in your friends' list!", e);
+        }
     }
 }

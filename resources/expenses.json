@@ -1,1 +1,1 @@
-{"a":[{"credited":"a","reasonForPayment":"pizza","totalAmount":10,"debited":{"name":"abc","users":["a","b","c"],"type":"GROUP"}}],"b":[{"credited":"b","reasonForPayment":"Pay back","totalAmount":3}],"c":[]}
+{"a":[],"b":[],"c":[]}

@@ -37,7 +37,7 @@ public final class ExchangeRatesClient implements CurrencyRatesClient {
     }
 
     private ExchangeRates updateExchangeRates() throws ExchangeAPIException {
-        if (apiKey.isEmpty()) {
+        if (apiKey.isBlank()) {
             throw new ExchangeAPIException("API key missing!");
         }
 

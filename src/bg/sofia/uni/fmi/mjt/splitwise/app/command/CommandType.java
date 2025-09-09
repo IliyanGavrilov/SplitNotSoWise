@@ -13,6 +13,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.expense.history.Payme
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.DisconnectCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.HelpCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.UnknownCommand;
+import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.WhoAmICommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.group.AddFriendCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.group.CreateGroupCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
@@ -40,6 +41,7 @@ public enum CommandType {
     SWITCH_CURRENCY(new String[] {"switch-currency", "change-currency", "set-currency"},
         new String[] {"<currency_code>"}, CommandArgumentsType.EXACT),
     LIST_CURRENCIES(new String[] {"list-currencies", "currencies"}, new String[] {}, CommandArgumentsType.EXACT),
+    WHOAMI(new String[] {"whoami", "me", "profile", "account"}, new String[] {}, CommandArgumentsType.EXACT),
     HELP(new String[] {"help", "info", "commands", "manual", "man"}, new String[] {},
         CommandArgumentsType.EXACT),
     DISCONNECT(new String[] {"disconnect"}, new String[] {}, CommandArgumentsType.EXACT),
@@ -84,7 +86,7 @@ public enum CommandType {
         return switch (commandType) {
             case LOGIN -> new LoginCommand(args, channel);
             case LOGOUT -> new LogoutCommand(args, channel);
-            case REGISTER -> new RegisterCommand(args);
+            case REGISTER -> new RegisterCommand(args, channel);
             case ADD_FRIEND -> new AddFriendCommand(args, channel);
             case CREATE_GROUP -> new CreateGroupCommand(args, channel);
             case SPLIT -> new SplitFriendshipCommand(args, channel);
@@ -94,6 +96,7 @@ public enum CommandType {
             case PAYMENT_HISTORY -> new PaymentHistoryCommand(args, channel);
             case SWITCH_CURRENCY -> new SwitchCurrencyCommand(args, channel);
             case LIST_CURRENCIES -> new ListCurrenciesCommand(args);
+            case WHOAMI -> new WhoAmICommand(args, channel);
             case HELP -> new HelpCommand(args);
             case DISCONNECT -> new DisconnectCommand(args);
             default -> new UnknownCommand(args);

@@ -22,7 +22,7 @@ public final class CreateGroupCommand extends AddCommand {
         Set<String> members = Arrays.stream(args, MEMBERS_NAME_START_IDX, args.length).collect(Collectors.toSet());
 
         if (members.contains(runner)) {
-            throw new ExpenseSplitException("You are already part of the group and cannot be added again!");
+            throw new ExpenseSplitException("You cannot be added more than once to the group!");
         }
 
         return members;

@@ -7,6 +7,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionMana
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 import bg.sofia.uni.fmi.mjt.splitwise.util.Encryption;
 
+import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
 public final class RegisterCommand extends Command {
@@ -15,8 +16,8 @@ public final class RegisterCommand extends Command {
     private static final int NICKNAME_IDX = 2;
     private static final String NICKNAME_DELIMITER = " ";
 
-    public RegisterCommand(String[] args) {
-        super(args, CommandType.REGISTER, null);
+    public RegisterCommand(String[] args, SocketChannel socket) {
+        super(args, CommandType.REGISTER, socket);
     }
 
     @Override

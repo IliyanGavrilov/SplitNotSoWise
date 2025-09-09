@@ -14,7 +14,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
 public abstract sealed class SplitCommand extends DebtStatusCommand permits SplitFriendshipCommand, SplitGroupCommand {
-    protected static final int NAME_IDX = 1;
     protected static final int REASON_FOR_PAYMENT_IDX = 2;
     protected static final String REASON_DELIMITER = " ";
     protected static final String INVALID_GROUP_MESSAGE = "Given %s does not exist!";
@@ -29,11 +28,10 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
     @Override
     protected String executeCommand() throws ExpenseSplitException {
         User runner = UserSessionManager.getInstance().getLoggedUser(socket);
+        checkForSelfCommand(runner.getUsername());
 
         Group group = getGroup(runner);
-        if (group == null) {
-            throw new ExpenseSplitException(invalidGroupMessage());
-        }
+        validateGroup(group);
 
         String reason = String.join(REASON_DELIMITER, Arrays.copyOfRange(args, REASON_FOR_PAYMENT_IDX, args.length));
 
@@ -52,7 +50,7 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
 
     protected abstract Group getGroup(User runner) throws ExpenseSplitException;
 
-    protected abstract String invalidGroupMessage();
+    protected abstract void validateGroup(Group group) throws ExpenseSplitException;
 
     protected abstract String getName(Group group) throws ExpenseSplitException;
 

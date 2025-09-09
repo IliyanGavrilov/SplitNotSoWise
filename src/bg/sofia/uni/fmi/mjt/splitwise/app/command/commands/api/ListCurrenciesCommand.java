@@ -7,7 +7,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException
 
 public final class ListCurrenciesCommand extends Command {
     public ListCurrenciesCommand(String[] args) {
-        super(args, CommandType.LIST_CURRENCIES, null);
+        super(args, CommandType.LIST_CURRENCIES);
     }
 
     @Override

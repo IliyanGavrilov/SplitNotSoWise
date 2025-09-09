@@ -77,7 +77,7 @@ public final class EnvironmentVariableLoader {
     }
 
     public static String get(String key) {
-        if (!ENV_VARS.containsKey(key) || ENV_VARS.get(key) == null || ENV_VARS.get(key).isEmpty()) {
+        if (!ENV_VARS.containsKey(key) || ENV_VARS.get(key) == null || ENV_VARS.get(key).isBlank()) {
             throw new InvalidEnvironmentVariable(String.format("Invalid environment variable: '%s' not found!", key));
         }
 

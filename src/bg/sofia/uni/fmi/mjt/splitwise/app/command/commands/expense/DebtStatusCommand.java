@@ -21,6 +21,7 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
     private static final int AMOUNT_IDX = 0;
     private static final int EQUAL = 0;
     private static final int GREATER = 1;
+    protected static final int USERNAME_IDX = 1;
 
     private ExchangeRates getExchangeRates() throws ExchangeAPIException {
         return ExchangeRatesClient.getInstance().getExchangeRates();
@@ -38,6 +39,12 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
     // Convert calculated amount to user's currency for program
     protected BigDecimal getOutputAmount(String runnerCurrency) throws ExchangeAPIException {
         return getExchangeRates().convertFromBaseCurrency(new BigDecimal(args[AMOUNT_IDX]), runnerCurrency);
+    }
+
+    protected void checkForSelfCommand(String runner) throws ExpenseSplitException {
+        if (args[USERNAME_IDX].equals(runner)) {
+            throw new ExpenseSplitException("Cannot split or pay money to yourself!");
+        }
     }
 
     protected String getDebtStatus(String runner, String debited) throws ExpenseSplitException {

@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 import java.nio.channels.SocketChannel;
 
 public final class PaidCommand extends DebtStatusCommand {
-    private static final int USERNAME_IDX = 1;
-
     private static final String SUCCESS_MESSAGE = "%s (%s) paid you %s %s\nCurrent status: %s";
     private static final String NOTIFICATION_MESSAGE = "%s approved your payment of %s %s.";
 
@@ -27,6 +25,7 @@ public final class PaidCommand extends DebtStatusCommand {
     @Override
     protected String executeCommand() throws ExpenseSplitException {
         User runner = UserSessionManager.getInstance().getLoggedUser(socket);
+        checkForSelfCommand(runner.getUsername());
         User debited = InMemoryUserRepository.getInstance().getUserByUsername(args[USERNAME_IDX]);
 
         BigDecimal inputAmount = getInputAmount(runner.getCurrency());

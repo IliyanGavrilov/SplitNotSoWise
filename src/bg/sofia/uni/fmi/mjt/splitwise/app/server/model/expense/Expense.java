@@ -11,7 +11,7 @@ public class Expense {
     private final String reasonForPayment;
     protected final BigDecimal totalAmount;
     protected final Group debited; // The people who owe the person who paid
-    public static final int BIG_DECIMAL_SCALE = 2;
+    public static final int BIG_DECIMAL_SCALE = 96;
 
     public Expense(BigDecimal totalAmount, String paidBy, Group debited, String reasonForPayment) {
         this.totalAmount = totalAmount;
@@ -29,7 +29,7 @@ public class Expense {
     }
 
     public BigDecimal getAmountPerPerson() {
-        return totalAmount.divide(BigDecimal.valueOf(debited.size()), BIG_DECIMAL_SCALE, RoundingMode.HALF_UP);
+        return totalAmount.divide(BigDecimal.valueOf(debited.size()), BIG_DECIMAL_SCALE, RoundingMode.HALF_EVEN);
     }
 
     public Set<String> getDebited(String username) {

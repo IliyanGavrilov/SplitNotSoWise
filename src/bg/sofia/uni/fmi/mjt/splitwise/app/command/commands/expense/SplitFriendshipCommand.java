@@ -8,6 +8,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRep
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
+import java.util.Set;
 
 public final class SplitFriendshipCommand extends SplitCommand {
     public SplitFriendshipCommand(String[] args, SocketChannel socket) {
@@ -16,21 +17,26 @@ public final class SplitFriendshipCommand extends SplitCommand {
 
     @Override
     protected Group getGroup(User runner) throws ExpenseSplitException {
-        return InMemoryGroupRepository.getInstance().getGroup(runner.getUsername(), args[NAME_IDX]);
+        return InMemoryGroupRepository.getInstance().getGroup(Set.of(runner.getUsername(), args[USERNAME_IDX]));
     }
 
     @Override
-    protected String invalidGroupMessage() {
-        return String.format(INVALID_GROUP_MESSAGE, "friend");
+    protected void validateGroup(Group group) throws ExpenseSplitException {
+        if (group == null) {
+            throw new ExpenseSplitException(String.format(INVALID_GROUP_MESSAGE, "friend"));
+        }
+        if (!group.isFriendshipGroup()) {
+            throw new ExpenseSplitException("The specified user is not your friend; it refers to a group instead!");
+        }
     }
 
     @Override
     protected String getName(Group group) throws ExpenseSplitException {
-        return InMemoryUserRepository.getInstance().getUserByUsername(args[NAME_IDX]).getNickname();
+        return InMemoryUserRepository.getInstance().getUserByUsername(args[USERNAME_IDX]).getNickname();
     }
 
     @Override
     protected String getIdentifier(String runner, Group group) throws ExpenseSplitException {
-        return getDebtStatus(runner, args[NAME_IDX]);
+        return getDebtStatus(runner, args[USERNAME_IDX]);
     }
 }

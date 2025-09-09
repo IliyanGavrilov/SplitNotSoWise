@@ -16,12 +16,18 @@ public final class SplitGroupCommand extends SplitCommand {
 
     @Override
     protected Group getGroup(User runner) throws ExpenseSplitException {
-        return InMemoryGroupRepository.getInstance().getGroup(args[NAME_IDX], runner.getUsername());
+        return InMemoryGroupRepository.getInstance().getGroup(args[USERNAME_IDX], runner.getUsername());
     }
 
     @Override
-    protected String invalidGroupMessage() {
-        return String.format(INVALID_GROUP_MESSAGE, "group");
+    protected void validateGroup(Group group) throws ExpenseSplitException {
+        if (group == null) {
+            throw new ExpenseSplitException(String.format(INVALID_GROUP_MESSAGE, "group"));
+        }
+
+        if (group.isFriendshipGroup()) {
+            throw new ExpenseSplitException("The specified name refers to a friend, not a group!");
+        }
     }
 
     @Override
