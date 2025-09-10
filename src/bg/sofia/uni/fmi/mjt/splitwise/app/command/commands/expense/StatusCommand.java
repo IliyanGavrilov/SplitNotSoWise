@@ -43,7 +43,7 @@ public final class StatusCommand extends DebtStatusCommand {
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
+        User runner = getCommandRunner();
 
         Set<Group> friendships = repositoryManager.groupRepository().getUserTwoPersonGroups(runner.getUsername());
         Set<Group> groups = repositoryManager.groupRepository().getUserMultiPersonGroups(runner.getUsername());

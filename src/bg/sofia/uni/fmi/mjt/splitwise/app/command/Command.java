@@ -1,5 +1,6 @@
 package bg.sofia.uni.fmi.mjt.splitwise.app.command;
 
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 import bg.sofia.uni.fmi.mjt.splitwise.util.json.GsonSingleton;
@@ -39,6 +40,14 @@ public abstract class Command {
 
     public String[] arguments() {
         return args;
+    }
+
+    protected User getCommandRunner() throws ExpenseSplitException {
+        return repositoryManager.sessionManager().getLoggedUser(socket);
+    }
+
+    protected String getCommandRunnerUsername() throws ExpenseSplitException {
+        return repositoryManager.sessionManager().getLoggedUsername(socket);
     }
 
     protected abstract String executeCommand() throws ExpenseSplitException;

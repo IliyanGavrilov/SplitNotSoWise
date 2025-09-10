@@ -22,7 +22,7 @@ public final class WhoAmICommand extends Command {
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
+        User runner = getCommandRunner();
 
         String friends = repositoryManager.groupRepository()
             .getUserTwoPersonGroups(runner.getUsername()).stream()

@@ -19,30 +19,39 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
     private static final String SUCCESS_MESSAGE = "Split %s %s between you and %s\nCurrent status: %s";
     private static final String NOTIFICATION_MESSAGE = "%s ... %s [%s].";
 
-    public SplitCommand(String[] args, CommandType type, SocketChannel socket, RepositoryManager repositoryManager) {
-        super(args, type, socket, repositoryManager);
+    private String extractReason() {
+        return String.join(REASON_DELIMITER, Arrays.copyOfRange(args, REASON_FOR_PAYMENT_IDX, args.length));
     }
 
-    @Override
-    protected String executeCommand() throws ExpenseSplitException {
-        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
-        checkForSelfCommand(runner.getUsername());
+    private void notifyMembers(User runner, Group group, BigDecimal inputAmount) throws ExpenseSplitException {
         User debited = repositoryManager.userRepository().getUserByUsername(args[USERNAME_IDX]);
-
-        Group group = getGroup(runner);
-        validateGroup(group);
-
-        String reason = String.join(REASON_DELIMITER, Arrays.copyOfRange(args, REASON_FOR_PAYMENT_IDX, args.length));
-
-        BigDecimal inputAmount = getInputAmount(runner.getCurrency());
-        repositoryManager.expenseRepository()
-            .addExpense(new EqualSplitExpense(inputAmount, runner.getUsername(), group, reason));
 
         repositoryManager.notificationRepository()
             .addNotification(runner.getUsername(),
                 String.format(NOTIFICATION_MESSAGE, runner.getNickname(), displayAmount(inputAmount),
                     debited.getCurrency()),
                 group);
+    }
+
+    public SplitCommand(String[] args, CommandType type, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, type, socket, repositoryManager);
+    }
+
+    @Override
+    protected String executeCommand() throws ExpenseSplitException {
+        User runner = getCommandRunner();
+        checkForSelfCommand(runner.getUsername());
+
+        Group group = getGroup(runner);
+        validateGroup(group);
+
+        String reason = extractReason();
+        BigDecimal inputAmount = getInputAmount(runner.getCurrency());
+
+        repositoryManager.expenseRepository()
+            .addExpense(new EqualSplitExpense(inputAmount, runner.getUsername(), group, reason));
+
+        notifyMembers(runner, group, inputAmount);
 
         return String.format(SUCCESS_MESSAGE, displayAmount(getOutputAmount(runner.getCurrency())),
             runner.getCurrency(), getName(group), getIdentifier(runner.getUsername(), group));

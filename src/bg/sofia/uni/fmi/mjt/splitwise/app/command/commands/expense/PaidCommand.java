@@ -15,28 +15,37 @@ public final class PaidCommand extends DebtStatusCommand {
     private static final String SUCCESS_MESSAGE = "%s (%s) paid you %s %s\nCurrent status: %s";
     private static final String NOTIFICATION_MESSAGE = "%s approved your payment of %s %s.";
 
+    private void registerPayment(User runner, User debited, BigDecimal inputAmount) {
+        Expense expense =
+            new EqualSplitExpense(inputAmount, runner.getUsername(), null, "Pay back");
+        repositoryManager.expenseRepository().pay(expense, debited.getUsername());
+    }
+
+    private void notifyUser(User runner, User debited, BigDecimal inputAmount) throws ExpenseSplitException {
+        repositoryManager.notificationRepository().addNotification(runner.getUsername(),
+            String.format(NOTIFICATION_MESSAGE, runner.getNickname(), displayAmount(inputAmount),
+                debited.getCurrency()),
+            repositoryManager.groupRepository().getGroup(Set.of(runner.getUsername(), debited.getUsername())));
+    }
+
     public PaidCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
         super(args, CommandType.PAID, socket, repositoryManager);
     }
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
+        User runner = getCommandRunner();
         checkForSelfCommand(runner.getUsername());
+
         User debited = repositoryManager.userRepository().getUserByUsername(args[USERNAME_IDX]);
 
         BigDecimal inputAmount = getInputAmount(runner.getCurrency());
-        Expense expense =
-            new EqualSplitExpense(inputAmount, runner.getUsername(), null, "Pay back");
-        repositoryManager.expenseRepository().pay(expense, debited.getUsername());
+
+        registerPayment(runner, debited, inputAmount);
+
+        notifyUser(runner, debited, inputAmount);
 
         String currStatus = getDebtStatus(runner, debited);
-        
-        repositoryManager.notificationRepository().addNotification(runner.getUsername(),
-            String.format(NOTIFICATION_MESSAGE, runner.getNickname(), displayAmount(inputAmount),
-                debited.getCurrency()),
-            repositoryManager.groupRepository().getGroup(Set.of(runner.getUsername(), debited.getUsername())));
-
         return String.format(SUCCESS_MESSAGE, debited.getNickname(), debited.getUsername(),
             displayAmount(getOutputAmount(runner.getCurrency())), runner.getCurrency(), currStatus);
     }

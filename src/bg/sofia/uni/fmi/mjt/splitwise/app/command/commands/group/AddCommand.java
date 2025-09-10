@@ -16,18 +16,22 @@ public abstract sealed class AddCommand extends Command permits AddFriendCommand
         super(args, type, socket, repositoryManager);
     }
 
-    @Override
-    protected final String executeCommand() throws ExpenseSplitException {
-        String runner = repositoryManager.sessionManager().getLoggedUsername(socket);
-        Set<String> members = new HashSet<>(getMembers(runner, args));
-
-        members.add(runner);
-
+    private void validateMembers(Set<String> members) throws ExpenseSplitException {
         for (String member : members) {
             if (!repositoryManager.userRepository().isRegistered(member)) {
                 throw new ExpenseSplitException(String.format(NOT_REGISTERED, member));
             }
         }
+    }
+
+    @Override
+    protected final String executeCommand() throws ExpenseSplitException {
+        String runner = getCommandRunnerUsername();
+        Set<String> members = new HashSet<>(getMembers(runner, args));
+
+        members.add(runner);
+
+        validateMembers(members);
 
         addGroup(members);
 

@@ -18,7 +18,7 @@ public final class SwitchCurrencyCommand extends Command {
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
+        User runner = getCommandRunner();
         String newCurrency = args[CURRENCY_CODE_IDX].toUpperCase();
 
         repositoryManager.userRepository().changeCurrency(runner, newCurrency);
