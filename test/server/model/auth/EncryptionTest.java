@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.mjt.splitwise.app.server.model.auth;
+package server.model.auth;
 
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 import bg.sofia.uni.fmi.mjt.splitwise.util.Encryption;
