@@ -3,9 +3,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.expense;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.Group;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.group.InMemoryGroupRepository;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
@@ -27,7 +25,7 @@ public final class StatusCommand extends DebtStatusCommand {
                 }
 
                 for (String username : users) {
-                    User debited = InMemoryUserRepository.getInstance().getUserByUsername(username);
+                    User debited = repositoryManager.userRepository().getUserByUsername(username);
 
                     status.append(users.size() > Group.FRIENDSHIP_GROUP_SIZE - 1 ? "- " : "* ")
                         .append(debited.getNickname()).append(" (").append(username).append("): ")
@@ -39,16 +37,16 @@ public final class StatusCommand extends DebtStatusCommand {
         return status.toString();
     }
 
-    public StatusCommand(String[] args, SocketChannel socket) {
-        super(args, CommandType.GET_STATUS, socket);
+    public StatusCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, CommandType.GET_STATUS, socket, repositoryManager);
     }
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
-        User runner = UserSessionManager.getInstance().getLoggedUser(socket);
+        User runner = repositoryManager.sessionManager().getLoggedUser(socket);
 
-        Set<Group> friendships = InMemoryGroupRepository.getInstance().getUserTwoPersonGroups(runner.getUsername());
-        Set<Group> groups = InMemoryGroupRepository.getInstance().getUserMultiPersonGroups(runner.getUsername());
+        Set<Group> friendships = repositoryManager.groupRepository().getUserTwoPersonGroups(runner.getUsername());
+        Set<Group> groups = repositoryManager.groupRepository().getUserMultiPersonGroups(runner.getUsername());
 
         return String.format(SUCCESS_MESSAGE, getStatus(runner, friendships), getStatus(runner, groups));
     }

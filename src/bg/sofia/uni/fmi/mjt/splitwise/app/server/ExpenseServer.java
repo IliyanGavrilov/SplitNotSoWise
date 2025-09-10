@@ -2,7 +2,13 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server;
 
 import bg.sofia.uni.fmi.mjt.splitwise.api.client.ExchangeRatesClient;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandExecutor;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.expense.InMemoryExpenseRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.group.InMemoryGroupRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.notification.InMemoryNotificationRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.session.UserSessionManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserRepository;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
@@ -27,8 +33,15 @@ public class ExpenseServer {
 
     private final CommandExecutor commandExecutor;
     private final int port;
-    private boolean isServerWorking;
 
+    private final UserRepository userRepository = new InMemoryUserRepository();
+    private final UserSessionManager userSessionManager = new UserSessionManager(userRepository);
+    private final RepositoryManager repositoryManager =
+        new RepositoryManager(new InMemoryExpenseRepository(), new InMemoryGroupRepository(),
+            new InMemoryNotificationRepository(userSessionManager), userSessionManager,
+            userRepository, ExchangeRatesClient.getInstance());
+
+    private boolean isServerWorking;
     private ByteBuffer buffer;
     private Selector selector;
 
@@ -76,7 +89,7 @@ public class ExpenseServer {
                     continue;
                 }
 
-                String output = commandExecutor.execute(clientInput, clientChannel);
+                String output = commandExecutor.execute(clientInput, clientChannel, repositoryManager);
 
                 writeClientOutput(clientChannel, output);
                 checkForDisconnect(clientChannel, clientInput);
@@ -93,8 +106,8 @@ public class ExpenseServer {
 
         int readBytes = clientChannel.read(buffer);
         if (readBytes < 0) {
-            if (UserSessionManager.getInstance().isLoggedIn(clientChannel)) {
-                UserSessionManager.getInstance().logout(clientChannel);
+            if (repositoryManager.sessionManager().isLoggedIn(clientChannel)) {
+                repositoryManager.sessionManager().logout(clientChannel);
             }
 
             clientChannel.close();

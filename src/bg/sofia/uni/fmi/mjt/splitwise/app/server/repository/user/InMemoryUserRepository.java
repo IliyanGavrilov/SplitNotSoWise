@@ -9,20 +9,11 @@ import java.util.Map;
 
 public final class InMemoryUserRepository implements UserRepository {
     private final Map<String, User> usersByUsername;
-    private static InMemoryUserRepository instance;
 
     private static final String NOT_REGISTERED = "User \"%s\" is not registered!";
 
-    private InMemoryUserRepository() {
+    public InMemoryUserRepository() {
         usersByUsername = RepositorySaver.loadUsers();
-    }
-
-    public static InMemoryUserRepository getInstance() {
-        if (instance == null) {
-            instance = new InMemoryUserRepository();
-        }
-
-        return instance;
     }
 
     public boolean isRegistered(String username) {

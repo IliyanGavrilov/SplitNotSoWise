@@ -1,5 +1,7 @@
 package bg.sofia.uni.fmi.mjt.splitwise.app.command;
 
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
+
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,13 @@ public final class CommandFactory {
         return tokens;
     }
 
-    public static Command newCommand(SocketChannel channel, String clientInput) {
+    public static Command newCommand(SocketChannel channel, String clientInput, RepositoryManager repositoryManager) {
         // Remove \r \n
         clientInput = clientInput.trim();
 
         List<String> tokens = CommandFactory.getCommandArguments(clientInput);
         String[] args = tokens.subList(1, tokens.size()).toArray(new String[0]);
 
-        return CommandType.getCommand(tokens.getFirst(), channel, args);
+        return CommandType.getCommand(new CommandDefinition(tokens.getFirst(), args), channel, repositoryManager);
     }
 }

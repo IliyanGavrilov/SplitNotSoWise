@@ -1,7 +1,7 @@
 package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.group;
 
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.group.InMemoryGroupRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
@@ -13,8 +13,8 @@ public final class CreateGroupCommand extends AddCommand {
     private static final int GROUP_NAME_IDX = 0;
     private static final int MEMBERS_NAME_START_IDX = 1;
 
-    public CreateGroupCommand(String[] args, SocketChannel socket) {
-        super(args, CommandType.CREATE_GROUP, socket);
+    public CreateGroupCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, CommandType.CREATE_GROUP, socket, repositoryManager);
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class CreateGroupCommand extends AddCommand {
 
     @Override
     protected void addGroup(Set<String> members) throws ExpenseSplitException {
-        InMemoryGroupRepository.getInstance().addGroup(args[GROUP_NAME_IDX], members);
+        repositoryManager.groupRepository().addGroup(args[GROUP_NAME_IDX], members);
     }
 
     @Override

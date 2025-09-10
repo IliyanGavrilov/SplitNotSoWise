@@ -3,7 +3,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.notification;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.ExpenseServer;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.Group;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositorySaver;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.session.UserSessionManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.io.IOException;
@@ -20,12 +20,12 @@ public final class InMemoryNotificationRepository implements NotificationReposit
     private static final String NOTIFICATIONS_DELIMITER = "\n";
 
     private final Map<String, Map<String, Queue<String>>> userNotifications; // Outer key - user, inner - group name
-    private static InMemoryNotificationRepository instance;
+    private final UserSessionManager userSessionManager;
 
     private void notify(String message, String groupName, String username) {
         try {
             ExpenseServer.getInstance()
-                .writeClientOutput(UserSessionManager.getInstance().getSocketChannel(username),
+                .writeClientOutput(userSessionManager.getSocketChannel(username),
                     NOTIFICATION_MESSAGE + '\n' + message);
         } catch (ExpenseSplitException _) {
             userNotifications.computeIfAbsent(username, _ -> new HashMap<>())
@@ -37,8 +37,9 @@ public final class InMemoryNotificationRepository implements NotificationReposit
         }
     }
 
-    private InMemoryNotificationRepository() {
+    public InMemoryNotificationRepository(UserSessionManager userSessionManager) {
         userNotifications = RepositorySaver.loadNotifications();
+        this.userSessionManager = userSessionManager;
     }
 
     private Map<String, Queue<String>> clearNotifications(String username) {
@@ -54,14 +55,6 @@ public final class InMemoryNotificationRepository implements NotificationReposit
         }
 
         return result.toString();
-    }
-
-    public static InMemoryNotificationRepository getInstance() {
-        if (instance == null) {
-            instance = new InMemoryNotificationRepository();
-        }
-
-        return instance;
     }
 
     public void addNotification(String runner, String message, Group group) {

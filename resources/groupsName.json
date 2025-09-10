@@ -1,1 +1,1 @@
-{"a b":[{"name":"a b","users":["a","b"],"type":"FRIEND"}],"abc":[{"name":"abc","users":["a","b","c"],"type":"GROUP"}],"abd":[{"name":"abd","users":["a","b","d"],"type":"GROUP"}]}
+{"a b":[{"name":"a b","users":["a","b"],"type":"FRIEND"}],"abc":[{"name":"abc","users":["a","b","c"],"type":"GROUP"}],"abd":[{"name":"abd","users":["a","b","d"],"type":"GROUP"}],"a c":[{"name":"a c","users":["a","c"],"type":"FRIEND"}]}

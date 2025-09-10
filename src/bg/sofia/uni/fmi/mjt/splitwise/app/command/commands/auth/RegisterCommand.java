@@ -2,8 +2,7 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.auth;
 
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.Command;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserSessionManager;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 import bg.sofia.uni.fmi.mjt.splitwise.util.Encryption;
 
@@ -16,14 +15,14 @@ public final class RegisterCommand extends Command {
     private static final int NICKNAME_IDX = 2;
     private static final String NICKNAME_DELIMITER = " ";
 
-    public RegisterCommand(String[] args, SocketChannel socket) {
-        super(args, CommandType.REGISTER, socket);
+    public RegisterCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, CommandType.REGISTER, socket, repositoryManager);
     }
 
     @Override
     protected String executeCommand() throws ExpenseSplitException {
         // Only allow registration if user is not logged in
-        if (UserSessionManager.getInstance().isLoggedIn(socket)) {
+        if (repositoryManager.sessionManager().isLoggedIn(socket)) {
             throw new ExpenseSplitException("Cannot run this command when logged in!");
         }
 
@@ -31,7 +30,7 @@ public final class RegisterCommand extends Command {
 
         String encryptedPassword = Encryption.encrypt(args[PASSWORD_IDX], args[USERNAME_IDX]);
 
-        InMemoryUserRepository.getInstance().register(args[USERNAME_IDX], encryptedPassword, nickname);
+        repositoryManager.userRepository().register(args[USERNAME_IDX], encryptedPassword, nickname);
 
         return "User registered successfully";
     }

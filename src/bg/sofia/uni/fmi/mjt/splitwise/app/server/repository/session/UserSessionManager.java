@@ -1,6 +1,7 @@
-package bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user;
+package bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.session;
 
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.UserRepository;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
@@ -10,17 +11,10 @@ import java.util.Map;
 public class UserSessionManager {
     private final Map<SocketChannel, String> activeSessions = new HashMap<>();
     private final Map<String, SocketChannel> loggedInUsers = new HashMap<>();
-    private static UserSessionManager instance;
+    private final UserRepository userRepository;
 
-    private UserSessionManager() {
-    }
-
-    public static UserSessionManager getInstance() {
-        if (instance == null) {
-            instance = new UserSessionManager();
-        }
-
-        return instance;
+    public UserSessionManager(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public void login(SocketChannel socketChannel, String username, String password) throws ExpenseSplitException {
@@ -32,7 +26,7 @@ public class UserSessionManager {
             throw new ExpenseSplitException("User is logged in from another device!");
         }
 
-        if (!InMemoryUserRepository.getInstance().validateUserLoginInfo(username, password)) {
+        if (!userRepository.validateUserLoginInfo(username, password)) {
             throw new ExpenseSplitException("Invalid username or password. Please try again!");
         }
 
@@ -66,7 +60,7 @@ public class UserSessionManager {
     }
 
     public User getLoggedUser(SocketChannel socketChannel) throws ExpenseSplitException {
-        return InMemoryUserRepository.getInstance().getUserByUsername(getLoggedUsername(socketChannel));
+        return userRepository.getUserByUsername(getLoggedUsername(socketChannel));
     }
 
     public SocketChannel getSocketChannel(String username) throws ExpenseSplitException {

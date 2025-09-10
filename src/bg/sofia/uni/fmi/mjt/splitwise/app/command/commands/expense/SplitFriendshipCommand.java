@@ -3,21 +3,20 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.expense;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.Group;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.group.InMemoryGroupRepository;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 public final class SplitFriendshipCommand extends SplitCommand {
-    public SplitFriendshipCommand(String[] args, SocketChannel socket) {
-        super(args, CommandType.SPLIT, socket);
+    public SplitFriendshipCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, CommandType.SPLIT, socket, repositoryManager);
     }
 
     @Override
     protected Group getGroup(User runner) throws ExpenseSplitException {
-        return InMemoryGroupRepository.getInstance().getGroup(Set.of(runner.getUsername(), args[USERNAME_IDX]));
+        return repositoryManager.groupRepository().getGroup(Set.of(runner.getUsername(), args[USERNAME_IDX]));
     }
 
     @Override
@@ -32,7 +31,7 @@ public final class SplitFriendshipCommand extends SplitCommand {
 
     @Override
     protected String getName(Group group) throws ExpenseSplitException {
-        return InMemoryUserRepository.getInstance().getUserByUsername(args[USERNAME_IDX]).getNickname();
+        return repositoryManager.userRepository().getUserByUsername(args[USERNAME_IDX]).getNickname();
     }
 
     @Override

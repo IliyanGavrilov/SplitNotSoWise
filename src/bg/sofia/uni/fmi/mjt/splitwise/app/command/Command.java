@@ -1,5 +1,6 @@
 package bg.sofia.uni.fmi.mjt.splitwise.app.command;
 
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 import bg.sofia.uni.fmi.mjt.splitwise.util.json.GsonSingleton;
 import bg.sofia.uni.fmi.mjt.splitwise.util.json.JsonResponse;
@@ -9,6 +10,8 @@ import java.nio.channels.SocketChannel;
 public abstract class Command {
     private static final String ERROR = "ERROR";
     private static final String OK = "OK";
+
+    protected final RepositoryManager repositoryManager;
 
     protected final String[] args;
     protected final CommandType type;
@@ -20,13 +23,18 @@ public abstract class Command {
     }
 
     public Command(String[] args, CommandType type) {
-        this(args, type, null);
+        this(args, type, null, null);
     }
 
-    public Command(String[] args, CommandType type, SocketChannel socket) {
+    public Command(String[] args, CommandType type, RepositoryManager repositoryManager) {
+        this(args, type, null, repositoryManager);
+    }
+
+    public Command(String[] args, CommandType type, SocketChannel socket, RepositoryManager repositoryManager) {
         this.args = args;
         this.type = type;
         this.socket = socket;
+        this.repositoryManager = repositoryManager;
     }
 
     public String[] arguments() {

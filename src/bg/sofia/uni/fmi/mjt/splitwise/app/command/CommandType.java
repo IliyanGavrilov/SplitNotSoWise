@@ -16,6 +16,7 @@ import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.UnknownComman
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.general.WhoAmICommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.group.AddFriendCommand;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.group.CreateGroupCommand;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.math.BigDecimal;
@@ -75,31 +76,31 @@ public enum CommandType {
         return null;
     }
 
-    public static Command getCommand(String command, SocketChannel channel,
-                                     String[] args) {
-        CommandType commandType = fromString(command);
+    public static Command getCommand(CommandDefinition command, SocketChannel channel,
+                                     RepositoryManager repositoryManager) {
+        CommandType commandType = fromString(command.name());
 
         if (commandType == null) {
-            return new UnknownCommand(args);
+            return new UnknownCommand(command.args());
         }
 
         return switch (commandType) {
-            case LOGIN -> new LoginCommand(args, channel);
-            case LOGOUT -> new LogoutCommand(args, channel);
-            case REGISTER -> new RegisterCommand(args, channel);
-            case ADD_FRIEND -> new AddFriendCommand(args, channel);
-            case CREATE_GROUP -> new CreateGroupCommand(args, channel);
-            case SPLIT -> new SplitFriendshipCommand(args, channel);
-            case SPLIT_GROUP -> new SplitGroupCommand(args, channel);
-            case GET_STATUS -> new StatusCommand(args, channel);
-            case PAID -> new PaidCommand(args, channel);
-            case PAYMENT_HISTORY -> new PaymentHistoryCommand(args, channel);
-            case SWITCH_CURRENCY -> new SwitchCurrencyCommand(args, channel);
-            case LIST_CURRENCIES -> new ListCurrenciesCommand(args);
-            case WHOAMI -> new WhoAmICommand(args, channel);
-            case HELP -> new HelpCommand(args);
-            case DISCONNECT -> new DisconnectCommand(args);
-            default -> new UnknownCommand(args);
+            case LOGIN -> new LoginCommand(command.args(), channel, repositoryManager);
+            case LOGOUT -> new LogoutCommand(command.args(), channel, repositoryManager);
+            case REGISTER -> new RegisterCommand(command.args(), channel, repositoryManager);
+            case ADD_FRIEND -> new AddFriendCommand(command.args(), channel, repositoryManager);
+            case CREATE_GROUP -> new CreateGroupCommand(command.args(), channel, repositoryManager);
+            case SPLIT -> new SplitFriendshipCommand(command.args(), channel, repositoryManager);
+            case SPLIT_GROUP -> new SplitGroupCommand(command.args(), channel, repositoryManager);
+            case GET_STATUS -> new StatusCommand(command.args(), channel, repositoryManager);
+            case PAID -> new PaidCommand(command.args(), channel, repositoryManager);
+            case PAYMENT_HISTORY -> new PaymentHistoryCommand(command.args(), channel, repositoryManager);
+            case SWITCH_CURRENCY -> new SwitchCurrencyCommand(command.args(), channel, repositoryManager);
+            case LIST_CURRENCIES -> new ListCurrenciesCommand(command.args(), repositoryManager);
+            case WHOAMI -> new WhoAmICommand(command.args(), channel, repositoryManager);
+            case HELP -> new HelpCommand(command.args());
+            case DISCONNECT -> new DisconnectCommand(command.args());
+            default -> new UnknownCommand(command.args());
         };
     }
 

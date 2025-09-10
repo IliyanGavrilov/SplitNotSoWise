@@ -3,20 +3,20 @@ package bg.sofia.uni.fmi.mjt.splitwise.app.command.commands.expense;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.Group;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.group.InMemoryGroupRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.nio.channels.SocketChannel;
 import java.util.Set;
 
 public final class SplitGroupCommand extends SplitCommand {
-    public SplitGroupCommand(String[] args, SocketChannel socket) {
-        super(args, CommandType.SPLIT_GROUP, socket);
+    public SplitGroupCommand(String[] args, SocketChannel socket, RepositoryManager repositoryManager) {
+        super(args, CommandType.SPLIT_GROUP, socket, repositoryManager);
     }
 
     @Override
     protected Group getGroup(User runner) throws ExpenseSplitException {
-        return InMemoryGroupRepository.getInstance().getGroup(args[USERNAME_IDX], runner.getUsername());
+        return repositoryManager.groupRepository().getGroup(args[USERNAME_IDX], runner.getUsername());
     }
 
     @Override

@@ -8,5 +8,4 @@ public class EqualSplitExpense extends Expense {
     public EqualSplitExpense(BigDecimal totalAmount, String paidBy, Group debited, String reasonForPayment) {
         super(totalAmount, paidBy, debited, reasonForPayment);
     }
-
 }

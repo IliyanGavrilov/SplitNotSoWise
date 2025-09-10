@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public final class InMemoryGroupRepository implements GroupRepository {
     private final Map<String, Set<Group>> groupsByName;
     private final Map<String, Set<Group>> groupsByUser;
-    private static InMemoryGroupRepository instance;
     private static final int UNIQUE_GROUPS_CNT = 1;
 
     private Set<Group> filterGroupsUserIsIn(String username, Predicate<Group> predicate) {
@@ -32,7 +31,7 @@ public final class InMemoryGroupRepository implements GroupRepository {
             .collect(Collectors.toSet());
     }
 
-    private InMemoryGroupRepository() {
+    public InMemoryGroupRepository() {
         groupsByName = RepositorySaver.loadGroupsByName();
         groupsByUser = RepositorySaver.loadGroupsByUser();
     }
@@ -49,14 +48,6 @@ public final class InMemoryGroupRepository implements GroupRepository {
 
         RepositorySaver.saveGroupsByName(groupsByName);
         RepositorySaver.saveGroupsByUser(groupsByUser);
-    }
-
-    public static InMemoryGroupRepository getInstance() {
-        if (instance == null) {
-            instance = new InMemoryGroupRepository();
-        }
-
-        return instance;
     }
 
     @Override

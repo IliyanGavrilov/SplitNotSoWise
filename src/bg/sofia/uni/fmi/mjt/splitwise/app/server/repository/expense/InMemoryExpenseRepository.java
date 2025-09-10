@@ -15,7 +15,6 @@ public final class InMemoryExpenseRepository implements ExpenseRepository {
     private final Map<String, List<Expense>> expenses; // For history of payments
     // Outer key is paidBy, inner is payers
     private final Map<String, Map<String, BigDecimal>> amountsOwed;
-    private static ExpenseRepository instance;
 
     private Map<String, BigDecimal> filterStatus(String username, Predicate<BigDecimal> predicate) {
         return amountsOwed.getOrDefault(username, new HashMap<>()).entrySet().stream()
@@ -23,17 +22,9 @@ public final class InMemoryExpenseRepository implements ExpenseRepository {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private InMemoryExpenseRepository() {
+    public InMemoryExpenseRepository() {
         expenses = RepositorySaver.loadExpenses();
         amountsOwed = RepositorySaver.loadBalances();
-    }
-
-    public static ExpenseRepository getInstance() {
-        if (instance == null) {
-            instance = new InMemoryExpenseRepository();
-        }
-
-        return instance;
     }
 
     @Override

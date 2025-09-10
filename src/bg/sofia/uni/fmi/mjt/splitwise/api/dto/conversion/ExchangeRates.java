@@ -31,6 +31,7 @@ public final class ExchangeRates extends BaseResponse {
         this.nextUpdateTime = other.nextUpdateTime;
     }
 
+    // TODO PACKAGE PRIVATE
     public static ExchangeRates getInstance(ExchangeRates exchangeRates) {
         if (instance == null) {
             instance = new ExchangeRates(exchangeRates);

@@ -5,6 +5,8 @@ import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 public interface UserRepository {
+    boolean isRegistered(String username);
+
     void register(String username, String password, String nickname) throws ExpenseSplitException;
 
     void changeCurrency(User user, String newCurrency) throws ExchangeAPIException;

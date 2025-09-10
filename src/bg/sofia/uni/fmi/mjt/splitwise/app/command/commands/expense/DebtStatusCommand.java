@@ -5,12 +5,12 @@ import bg.sofia.uni.fmi.mjt.splitwise.api.dto.conversion.ExchangeRates;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.Command;
 import bg.sofia.uni.fmi.mjt.splitwise.app.command.CommandType;
 import bg.sofia.uni.fmi.mjt.splitwise.app.server.model.user.User;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.expense.InMemoryExpenseRepository;
-import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.user.InMemoryUserRepository;
+import bg.sofia.uni.fmi.mjt.splitwise.app.server.repository.RepositoryManager;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExchangeAPIException;
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.channels.SocketChannel;
 
 public abstract sealed class DebtStatusCommand extends Command permits PaidCommand, StatusCommand, SplitCommand {
@@ -18,6 +18,7 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
     private static final String DEBT_STATUS_POSITIVE = "Owes you %s %s";
     private static final String DEBT_STATUS_NEGATIVE = "You owe %s %s";
 
+    private static final int MONEY_SCALE = 2;
     private static final int AMOUNT_IDX = 0;
     private static final int EQUAL = 0;
     private static final int GREATER = 1;
@@ -27,8 +28,8 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
         return ExchangeRatesClient.getInstance().getExchangeRates();
     }
 
-    public DebtStatusCommand(String[] args, CommandType type, SocketChannel socket) {
-        super(args, type, socket);
+    protected BigDecimal displayAmount(BigDecimal amount) {
+        return amount.setScale(MONEY_SCALE, RoundingMode.HALF_EVEN);
     }
 
     // Convert input to program's base currency for calculations
@@ -38,7 +39,7 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
 
     // Convert calculated amount to user's currency for program
     protected BigDecimal getOutputAmount(String runnerCurrency) throws ExchangeAPIException {
-        return getExchangeRates().convertFromBaseCurrency(new BigDecimal(args[AMOUNT_IDX]), runnerCurrency);
+        return getExchangeRates().convertFromBaseCurrency(getInputAmount(runnerCurrency), runnerCurrency);
     }
 
     protected void checkForSelfCommand(String runner) throws ExpenseSplitException {
@@ -48,8 +49,8 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
     }
 
     protected String getDebtStatus(String runner, String debited) throws ExpenseSplitException {
-        User r = InMemoryUserRepository.getInstance().getUserByUsername(runner);
-        User d = InMemoryUserRepository.getInstance().getUserByUsername(debited);
+        User r = repositoryManager.userRepository().getUserByUsername(runner);
+        User d = repositoryManager.userRepository().getUserByUsername(debited);
 
         return getDebtStatus(r, d);
     }
@@ -58,16 +59,21 @@ public abstract sealed class DebtStatusCommand extends Command permits PaidComma
         ExchangeRates exchangeRates = ExchangeRatesClient.getInstance().getExchangeRates();
 
         BigDecimal amount =
-            InMemoryExpenseRepository.getInstance().getDebtStatus(runner.getUsername(), debited.getUsername());
+            displayAmount(
+                repositoryManager.expenseRepository().getDebtStatus(runner.getUsername(), debited.getUsername()));
+        String convertedAmount =
+            String.valueOf(displayAmount(exchangeRates.convertFromBaseCurrency(amount, runner.getCurrency()).abs()));
 
         return switch (amount.compareTo(BigDecimal.ZERO)) {
             case EQUAL -> DEBT_STATUS_EQUAL;
-            case GREATER ->
-                String.format(DEBT_STATUS_POSITIVE, exchangeRates.convertFromBaseCurrency(amount, runner.getCurrency()),
-                    runner.getCurrency());
+            case GREATER -> String.format(DEBT_STATUS_POSITIVE, convertedAmount, runner.getCurrency());
             // case LESS_THAN a.k.a -1
-            default -> String.format(DEBT_STATUS_NEGATIVE,
-                exchangeRates.convertFromBaseCurrency(amount, runner.getCurrency()).abs(), runner.getCurrency());
+            default -> String.format(DEBT_STATUS_NEGATIVE, convertedAmount, runner.getCurrency());
         };
+    }
+
+    public DebtStatusCommand(String[] args, CommandType type, SocketChannel socket,
+                             RepositoryManager repositoryManager) {
+        super(args, type, socket, repositoryManager);
     }
 }
