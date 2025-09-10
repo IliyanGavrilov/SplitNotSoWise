@@ -23,5 +23,5 @@ public interface ExpenseRepository {
 
     Map<String, BigDecimal> getStatusDebtsOnly(String username);
 
-    public List<Expense> getHistory(String username);
+    List<Expense> getHistory(String username);
 }

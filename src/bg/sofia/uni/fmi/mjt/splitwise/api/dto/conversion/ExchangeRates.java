@@ -19,19 +19,12 @@ public final class ExchangeRates extends BaseResponse {
     private final LocalDateTime nextUpdateTime;
     private static ExchangeRates instance;
 
-    private ExchangeRates(Map<String, BigDecimal> rates, LocalDateTime nextUpdateTime) {
-        super(STATUS);
-        this.rates = rates;
-        this.nextUpdateTime = nextUpdateTime;
-    }
-
     private ExchangeRates(ExchangeRates other) {
         super(STATUS);
         this.rates = other.rates;
         this.nextUpdateTime = other.nextUpdateTime;
     }
 
-    // TODO PACKAGE PRIVATE
     public static ExchangeRates getInstance(ExchangeRates exchangeRates) {
         if (instance == null) {
             instance = new ExchangeRates(exchangeRates);

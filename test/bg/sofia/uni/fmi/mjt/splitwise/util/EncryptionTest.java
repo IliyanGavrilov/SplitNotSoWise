@@ -1,7 +1,6 @@
-package server.model.auth;
+package bg.sofia.uni.fmi.mjt.splitwise.util;
 
 import bg.sofia.uni.fmi.mjt.splitwise.exception.exceptions.ExpenseSplitException;
-import bg.sofia.uni.fmi.mjt.splitwise.util.Encryption;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
