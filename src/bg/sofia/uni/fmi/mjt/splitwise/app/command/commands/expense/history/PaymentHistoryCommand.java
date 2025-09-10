@@ -15,7 +15,7 @@ public final class PaymentHistoryCommand extends Command {
     @Override
     protected String executeCommand() throws ExpenseSplitException {
         String runner = getCommandRunnerUsername();
-
+        // TODO FORMATTING
         return repositoryManager.expenseRepository().getHistory(runner).toString();
     }
 }

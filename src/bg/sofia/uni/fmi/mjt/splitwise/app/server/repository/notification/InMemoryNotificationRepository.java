@@ -26,15 +26,21 @@ public final class InMemoryNotificationRepository implements NotificationReposit
         try {
             ExpenseServer.getInstance()
                 .writeClientOutput(userSessionManager.getSocketChannel(username),
-                    NOTIFICATION_MESSAGE + '\n' + message);
+                    formatSingleNotification(groupName, message));
         } catch (ExpenseSplitException _) {
-            userNotifications.computeIfAbsent(username, _ -> new HashMap<>())
-                .computeIfAbsent(groupName, _ -> new LinkedList<>()).add(message);
+            userNotifications
+                .computeIfAbsent(username, _ -> new HashMap<>())
+                .computeIfAbsent(groupName, _ -> new LinkedList<>())
+                .add(message);
 
             RepositorySaver.saveNotifications(userNotifications);
         } catch (IOException e) {
             System.err.printf("Failed to notify user %s%n", e.getMessage());
         }
+    }
+
+    private String formatSingleNotification(String groupName, String message) {
+        return "*** Notifications ***\n" + groupName + ":\n" + message;
     }
 
     public InMemoryNotificationRepository(UserSessionManager userSessionManager) {
@@ -48,13 +54,19 @@ public final class InMemoryNotificationRepository implements NotificationReposit
 
     private String printUnreadNotifications(Map<String, Queue<String>> notifications) {
         StringBuilder result = new StringBuilder();
+        result.append("*** Notifications ***\n");
 
-        for (String key : notifications.keySet()) {
-            result.append(key).append(":\n");
-            result.append(String.join(NOTIFICATIONS_DELIMITER, notifications.get(key)));
+        for (Map.Entry<String, Queue<String>> entry : notifications.entrySet()) {
+            String groupName = entry.getKey();
+            result.append(groupName).append(":\n");
+
+            for (String msg : entry.getValue()) {
+                result.append(msg).append('\n');
+            }
+            result.append('\n'); // blank line between groups
         }
 
-        return result.toString();
+        return result.toString().trim(); // remove last newline
     }
 
     public void addNotification(String runner, String message, Group group) {

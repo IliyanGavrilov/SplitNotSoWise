@@ -41,6 +41,8 @@ public final class SplitGroupCommand extends SplitCommand {
         StringBuilder result = new StringBuilder();
 
         for (String username : g) {
+            result.append('\n');
+            result.append(String.format("* %s ", username));
             result.append(getDebtStatus(runner, username));
         }
 

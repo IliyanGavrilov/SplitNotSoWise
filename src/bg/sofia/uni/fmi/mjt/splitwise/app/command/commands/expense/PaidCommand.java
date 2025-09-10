@@ -13,7 +13,8 @@ import java.util.Set;
 
 public final class PaidCommand extends DebtStatusCommand {
     private static final String SUCCESS_MESSAGE = "%s (%s) paid you %s %s\nCurrent status: %s";
-    private static final String NOTIFICATION_MESSAGE = "%s approved your payment of %s %s.";
+    private static final String REASON = "Pay back";
+    private static final String NOTIFICATION_MESSAGE = "%s approved your payment of %s %s. [%s]";
 
     private void registerPayment(User runner, User debited, BigDecimal inputAmount) {
         Expense expense =
@@ -24,7 +25,7 @@ public final class PaidCommand extends DebtStatusCommand {
     private void notifyUser(User runner, User debited, BigDecimal inputAmount) throws ExpenseSplitException {
         repositoryManager.notificationRepository().addNotification(runner.getUsername(),
             String.format(NOTIFICATION_MESSAGE, runner.getNickname(), displayAmount(inputAmount),
-                debited.getCurrency()),
+                debited.getCurrency(), REASON),
             repositoryManager.groupRepository().getGroup(Set.of(runner.getUsername(), debited.getUsername())));
     }
 

@@ -17,19 +17,17 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
     protected static final String INVALID_GROUP_MESSAGE = "Given %s does not exist!";
 
     private static final String SUCCESS_MESSAGE = "Split %s %s between you and %s\nCurrent status: %s";
-    private static final String NOTIFICATION_MESSAGE = "%s ... %s [%s].";
+    private static final String NOTIFICATION_MESSAGE = "* You owe %s %s %s [%s].";
 
     private String extractReason() {
         return String.join(REASON_DELIMITER, Arrays.copyOfRange(args, REASON_FOR_PAYMENT_IDX, args.length));
     }
 
-    private void notifyMembers(User runner, Group group, BigDecimal inputAmount) throws ExpenseSplitException {
-        User debited = repositoryManager.userRepository().getUserByUsername(args[USERNAME_IDX]);
-
+    private void notifyMembers(User runner, Group group, BigDecimal inputAmount, String reason) {
         repositoryManager.notificationRepository()
             .addNotification(runner.getUsername(),
                 String.format(NOTIFICATION_MESSAGE, runner.getNickname(), displayAmount(inputAmount),
-                    debited.getCurrency()),
+                    runner.getCurrency(), reason),
                 group);
     }
 
@@ -51,7 +49,7 @@ public abstract sealed class SplitCommand extends DebtStatusCommand permits Spli
         repositoryManager.expenseRepository()
             .addExpense(new EqualSplitExpense(inputAmount, runner.getUsername(), group, reason));
 
-        notifyMembers(runner, group, inputAmount);
+        notifyMembers(runner, group, inputAmount, reason);
 
         return String.format(SUCCESS_MESSAGE, displayAmount(getOutputAmount(runner.getCurrency())),
             runner.getCurrency(), getName(group), getIdentifier(runner.getUsername(), group));

@@ -46,7 +46,7 @@ public enum CommandType {
     HELP(new String[] {"help", "info", "commands", "manual", "man"}, new String[] {},
         CommandArgumentsType.EXACT),
     DISCONNECT(new String[] {"disconnect"}, new String[] {}, CommandArgumentsType.EXACT),
-    UNKNOWN(new String[] {""}, new String[] {}, CommandArgumentsType.EXACT);
+    UNKNOWN(new String[] {""}, new String[] {}, CommandArgumentsType.AT_LEAST);
 
     private static final String INVALID_ARGS =
         "Invalid count of arguments: \"%s\" expects EXACTLY %d arguments. Example: \"%s\"";
@@ -73,6 +73,7 @@ public enum CommandType {
                 return type;
             }
         }
+
         return null;
     }
 

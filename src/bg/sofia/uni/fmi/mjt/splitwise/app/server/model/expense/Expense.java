@@ -28,6 +28,10 @@ public class Expense {
         return totalAmount;
     }
 
+    public String getReasonForPayment() {
+        return reasonForPayment;
+    }
+
     public BigDecimal getAmountPerPerson() {
         return totalAmount.divide(BigDecimal.valueOf(debited.size()), BIG_DECIMAL_SCALE, RoundingMode.HALF_EVEN);
     }
