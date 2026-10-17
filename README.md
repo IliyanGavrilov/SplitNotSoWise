@@ -1,6 +1,6 @@
 # SplitNotSoWise
 
-A client–server expense-splitting app in Java, inspired by Splitwise. Users register, add friends, create groups, split bills and settle debts from a terminal client, and the server keeps everyone's balances, payment history and notifications. Amounts can be shown in any currency using live exchange rates.
+A client-server expense-splitting app in Java, inspired by Splitwise. Users register, add friends, create groups, split bills and settle debts from a terminal client, and the server keeps everyone's balances, payment history and notifications. Amounts can be shown in any currency using live exchange rates.
 
 Built as the course project for **Modern Java Technologies** at FMI, Sofia University (2025).
 
@@ -18,15 +18,15 @@ Built as the course project for **Modern Java Technologies** at FMI, Sofia Unive
 ## Architecture
 
 ```
-EchoClient  ──TCP :7777──▶  ExpenseServer (Java NIO, non-blocking, single Selector)
+EchoClient  ──TCP :7777-->  ExpenseServer (Java NIO, non-blocking, single Selector)
                                   │
-                         CommandExecutor ─▶ CommandFactory ─▶ Command (sealed hierarchy)
+                         CommandExecutor -> CommandFactory -> Command (sealed hierarchy)
                                   │
                          RepositoryManager
-                         ├─ users · groups · expenses · notifications (in-memory)
+                         ├─ users / groups / expenses / notifications (in-memory)
                          ├─ UserSessionManager (who is logged in on which socket)
-                         ├─ RepositorySaver ──▶ resources/*.json
-                         └─ ExchangeRatesClient ──HTTPS──▶ ExchangeRate-API
+                         ├─ RepositorySaver --> resources/*.json
+                         └─ ExchangeRatesClient ──HTTPS--> ExchangeRate-API
 ```
 
 - **Networking:** one server thread handles all clients through `java.nio` channels and a `Selector`.
@@ -40,19 +40,19 @@ EchoClient  ──TCP :7777──▶  ExpenseServer (Java NIO, non-blocking, sin
 |---|---|
 | `register` | `<username> <password> <nickname>` |
 | `login` | `<username> <password>` |
-| `logout` | — |
+| `logout` | - |
 | `add-friend` (`add-user`) | `<username>` |
 | `create-group` (`add-group`) | `<group_name> <username> <username> ...` |
 | `split` (`split-friend`, `split-user`) | `<amount> <username> <reason>` |
 | `split-group` | `<amount> <group_name> <reason>` |
 | `paid` | `<amount> <username>` |
-| `status` (`get-status`) | — |
-| `payment-history` (`history`, `payments`, `transactions`) | — |
+| `status` (`get-status`) | - |
+| `payment-history` (`history`, `payments`, `transactions`) | - |
 | `switch-currency` (`set-currency`) | `<currency_code>` |
-| `list-currencies` (`currencies`) | — |
-| `whoami` (`me`, `profile`, `account`) | — |
-| `help` (`commands`, `man`) | — |
-| `disconnect` | — |
+| `list-currencies` (`currencies`) | - |
+| `whoami` (`me`, `profile`, `account`) | - |
+| `help` (`commands`, `man`) | - |
+| `disconnect` | - |
 
 ## Running it
 
@@ -70,4 +70,4 @@ EchoClient  ──TCP :7777──▶  ExpenseServer (Java NIO, non-blocking, sin
 
 ## Tech
 
-Java 22 (records, sealed classes, switch expressions, unnamed variables) · java.nio · java.net.http · Gson · JUnit 5 · Mockito
+Java 22 (records, sealed classes, switch expressions, unnamed variables), java.nio, java.net.http, Gson, JUnit 5, Mockito
